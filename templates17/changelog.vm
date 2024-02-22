@@ -1,0 +1,13 @@
+#set($H="#")
+$H$H Changelog
+
+$H$H [Unreleased]
+
+$$H$H [1.0.0] - 2024-02-21
+
+$H$H$H Added
+
+- Set up
+
+[unreleased]: https://github.com/mlieshoff/jabbyml/compare/v${replacer.getVersion()}...HEAD
+[1.0.0]: https://github.com/mlieshoff/jabbyml/compare/v1.0.0...v1.0.0

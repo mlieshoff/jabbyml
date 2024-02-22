@@ -1,0 +1,42 @@
+#if($helper.isStereotype('body', $object))
+#elseif($object.attribute.size()>0)
+    #set($bodyParametersExisting=false)
+    #set($queryParametersExisting=false)
+    #set($restParametersExisting=false)
+    #foreach( $attribute in $object.attribute )
+        #if($helper.isStereotype('queryParameter', $attribute))
+            #set($queryParametersExisting=true)
+        #end
+        #if($helper.isStereotype('body', $attribute))
+            #set($bodyParametersExisting=true)
+        #end
+        #if($helper.isStereotype('restParameter', $attribute) == false)
+            #set($restParametersExisting=true)
+        #end
+    #end
+    #if($restParametersExisting)
+    @Override
+    public Map<String, Object> getRestParameters() {
+    Map<String, Object> map = super.getRestParameters();
+        #foreach( $attribute in $object.attribute )
+            #if($helper.isStereotype('restParameter', $attribute) == false)
+            map.put("${attribute.name}", ${replacer.getAttributeName($attribute.name)});
+            #end
+        #end
+    return map;
+    }
+    #end
+
+    #if($queryParametersExisting)
+    @Override
+    public Map<String, Object> getQueryParameters() {
+    Map<String, Object> map = super.getQueryParameters();
+        #foreach( $attribute in $object.attribute )
+            #if($helper.isStereotype('queryParameter', $attribute))
+            map.put("${attribute.name}", ${replacer.getAttributeName($attribute.name)});
+            #end
+        #end
+    return map;
+    }
+    #end
+#end

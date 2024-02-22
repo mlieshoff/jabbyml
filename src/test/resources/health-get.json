@@ -1,0 +1,17 @@
+{
+  "model": "TabbyML/StarCoder-1B",
+  "chat_model": "TabbyML/WizardCoder-3B",
+  "device": "cuda",
+  "arch": "x86_64",
+  "cpu_info": "12th Gen Intel(R) Core(TM) i9-12900H",
+  "cpu_count": 20,
+  "cuda_devices": [
+    "NVIDIA RTX A2000 8GB Laptop GPU"
+  ],
+  "version": {
+    "build_date": "2024-02-06",
+    "build_timestamp": "2024-02-06T20:21:24.197266503Z",
+    "git_sha": "9b8c0865de35266d1fb4c206549ef94b97a5f942",
+    "git_describe": "v0.8.3"
+  }
+}

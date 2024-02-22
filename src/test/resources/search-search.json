@@ -1,0 +1,29 @@
+{
+  "num_hits": 94,
+  "hits": [
+    {
+      "score": 9.653483,
+      "doc": {
+        "body": "private String cleanupString(String string) {\n        string = string.replaceAll(\"<br>\", \", \");\n        return string;\n    }",
+        "filepath": "mydir/MyClass.java",
+        "git_url": "file:///data/repos",
+        "kind": "method",
+        "language": "java",
+        "name": "cleanupString"
+      },
+      "id": 74150
+    },
+    {
+      "score": 9.226584,
+      "doc": {
+        "body": "string(expected)",
+        "filepath": "mydir/MyTest.java",
+        "git_url": "file:///data/repos",
+        "kind": "call",
+        "language": "java",
+        "name": "string"
+      },
+      "id": 51191
+    }
+  ]
+}

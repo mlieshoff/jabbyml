@@ -1,0 +1,124 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package ${replacer.getPackageName($properties, $object)};
+#set($basePackageName=$replacer.getBasePackageName($properties))
+
+import static wiremock.org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import ${basePackageName}.IntegrationTestBase;
+
+import jabbyml.essentials.connector.HttpMethod;
+
+public class ${filename} extends IntegrationTestBase {
+
+  private ${replacer.getTypeName($object.name)}Api unitUnderTest;
+
+  @BeforeEach
+  void setUp() {
+    unitUnderTest = ${apiAccessorMethodName}().getApi(${WordUtils.capitalize($object.name)}Api.class);
+  }
+
+#foreach($method in $object.method)
+  #set($attribute=$method.attribute.get(0))
+  #set($packagePrefix=${replacer.getPackageNamePrefix($properties, $method.scope, $attribute.type)})
+  #set($methodName=${replacer.getMethodName($method.name)})
+  @Test
+  void ${methodName}() throws Exception {
+    #set($parameterType=${replacer.getTypeName($method.attribute[0].type)})
+    #set($parameterName=${replacer.getAttributeName($method.attribute[0].name)})
+    #set($requestObject=${helper.getEntity($method.scope, $method.attribute[0].type)})
+    #set($mandatoryAttributes=$helper.getMandatoryAttributes($requestObject))
+    #set($optionalAttributes=$helper.getOptionalAttributes($requestObject))
+    #foreach($attribute in $requestObject.attribute)
+    ${replacer.getTypeName($attribute.type)} ${replacer.getAttributeName($attribute.name)} = ${replacer.getFixtureValue($attribute)};
+    #end
+    ${packagePrefix}${parameterType}.${parameterType}Builder builder = ${packagePrefix}${parameterType}.builder(${replacer.concatAttributes($mandatoryAttributes, ', ', '{name}')});
+    ${packagePrefix}$parameterType request = builder
+    #if($optionalAttributes.size()>0)
+      ${replacer.concatAttributes($optionalAttributes, '$#LF#$      ', '.{name}({name})')}
+    #end
+      .storeRawResponse(true)
+      .build();
+
+    #set($queryAttributes=$helper.getAttributesWithStereotype("queryParameter", $requestObject))
+    #set($httpMethod="undef")
+    #if($helper.isStereotype('post', $method))
+        #set($httpMethod="POST")
+    #elseif($helper.isStereotype('get', $method))
+        #set($httpMethod="GET")
+    #end
+    prepare("${replacer.findContextValue($method.getContext(), 'url')}",
+    #if($queryAttributes.size()>0)
+        "${replacer.concatAttributes($queryAttributes, '&', '{name}=" + {name}', ' + "')}
+        #else
+            EMPTY
+        #end
+        , HttpMethod.${httpMethod}, Map.of(${helper.mapKeyValueCommaSeparated($helper.getStereotypes('header', $method))})
+    , "src/test/resources/${WordUtils.uncapitalize($object.name)}-${methodName}.json");
+    ${packagePrefix}${replacer.getTypeName($method.return)} expected = toJson(${packagePrefix}${replacer.getTypeName($method.return)}.class,
+    #if($helper.getStereotypes('header', $method).containsValue("text/event-stream"))
+        readJson("src/test/resources/${WordUtils.uncapitalize($object.name)}-${methodName}-expected.json"));
+    #else
+        getExpected());
+    #end
+
+    run(expected, () -> unitUnderTest.${methodName}(request).get());
+  }
+
+  @Test
+  void ${methodName}_whenWithException() {
+    #set($parameterType=${replacer.getTypeName($method.attribute[0].type)})
+    #set($parameterName=${replacer.getAttributeName($method.attribute[0].name)})
+    #set($requestObject=${helper.getEntity($method.scope, $method.attribute[0].type)})
+    #set($mandatoryAttributes=$helper.getMandatoryAttributes($requestObject))
+    #set($optionalAttributes=$helper.getOptionalAttributes($requestObject))
+    #foreach($attribute in $requestObject.attribute)
+    ${replacer.getTypeName($attribute.type)} ${replacer.getAttributeName($attribute.name)} = ${replacer.getFixtureValue($attribute)};
+    #end
+    ${packagePrefix}${parameterType}.${parameterType}Builder builder = ${packagePrefix}${parameterType}.builder(${replacer.concatAttributes($mandatoryAttributes, ', ', '{name}')});
+    ${packagePrefix}$parameterType request = builder
+    #if($optionalAttributes.size()>0)
+      ${replacer.concatAttributes($optionalAttributes, '$#LF#$      ', '.{name}({name})')}
+    #end
+      .storeRawResponse(true)
+      .build();
+
+    #set($queryAttributes=$helper.getAttributesWithStereotype("queryParameter", $requestObject))
+    #set($httpMethod="undef")
+    #if($helper.isStereotype('post', $method))
+        #set($httpMethod="POST")
+    #elseif($helper.isStereotype('get', $method))
+        #set($httpMethod="GET")
+    #end
+    prepareWithErrorAndRun("${replacer.findContextValue($method.getContext(), 'url')}",
+        #if($queryAttributes.size()>0)
+        "${replacer.concatAttributes($queryAttributes, '&', '{name}=" + {name}', ' + "')}
+        #else
+            EMPTY
+        #end
+        , HttpMethod.${httpMethod}, Map.of(${helper.mapKeyValueCommaSeparated($helper.getStereotypes('header', $method))})
+        , request, () -> unitUnderTest.${methodName}(request).get());
+  }
+
+#end
+}

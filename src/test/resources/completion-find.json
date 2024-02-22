@@ -1,0 +1,9 @@
+{
+  "id": "cmpl-6da8b690-7b05-401e-a4b6-501610c625df",
+  "choices": [
+    {
+      "index": 0,
+      "text": " get_whenNoExisting_thenReturnNull() {\n\n        when(mock.findBy(\n                        User.global, true, User.street, 1))\n               .thenReturn(Optional.empty());\n\n        assertThatExceptionOfType(NoSuchElementException.class)\n               .isThrownBy(() -> userService.getUser(1));\n    }"
+    }
+  ]
+}
