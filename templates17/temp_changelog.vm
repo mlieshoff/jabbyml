@@ -1,0 +1,9 @@
+$H$H [${replacer.getVersion()}] - ${replacer.getCurrentDate()}
+
+$H$H$H Added
+
+$H$H$H Fixed
+
+$H$H$H Changed
+
+$H$H$H Removed

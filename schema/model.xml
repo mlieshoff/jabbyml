@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<model version="1.0.0">
+    <stereotype name="model"/>
+    <!-- /v1/completions -->
+    <entity name="Completion" scope="v1.completions">
+        <stereotype name="endpoint"/>
+        <method name="find" return="CompletionResponse" scope="v1.completions">
+            <stereotype name="post"/>
+            <stereotype name="header" key="Content-Type" value="application/json"/>
+            <stereotype name="header" key="accept" value="application/json"/>
+            <context key="url" value="/v1/completions"/>
+            <attribute name="CompletionRequest" type="CompletionRequest" />
+        </method>
+    </entity>
+    <entity name="CompletionRequest" scope="v1.completions">
+        <context key="responseType" value="CompletionResponse"/>
+        <stereotype name="request"/>
+        <stereotype name="body"/>
+        <attribute name="language" type="String"/>
+        <attribute name="segments" type="Segments"/>
+    </entity>
+    <entity name="Segments" scope="v1.completions">
+        <stereotype name="dto"/>
+        <attribute name="prefix" type="String"/>
+        <attribute name="suffix" type="String"/>
+    </entity>
+    <entity name="CompletionResponse" scope="v1.completions">
+        <stereotype name="response"/>
+        <context key="objectType" value="Completion"/>
+    </entity>
+    <entity name="Completion" scope="v1.completions">
+        <stereotype name="dto"/>
+        <attribute name="id" type="String"/>
+        <attribute name="choices" type="list(CompletionChoice)"/>
+    </entity>
+    <entity name="CompletionChoice" scope="v1.completions">
+        <stereotype name="dto"/>
+        <attribute name="index" type="int"/>
+        <attribute name="text" type="String"/>
+    </entity>
+    <!-- /v1/events -->
+    <entity name="Event" scope="v1.events">
+        <stereotype name="endpoint"/>
+        <method name="find" return="EventResponse" scope="v1.events">
+            <stereotype name="post"/>
+            <stereotype name="header" key="Content-Type" value="application/json"/>
+            <stereotype name="header" key="accept" value="*/*"/>
+            <context key="url" value="/v1/events"/>
+            <attribute name="EventRequest" type="EventRequest"/>
+        </method>
+    </entity>
+    <entity name="EventRequest" scope="v1.events">
+        <context key="responseType" value="CompletionResponse"/>
+        <stereotype name="request"/>
+        <stereotype name="body"/>
+        <attribute name="type" type="String"/>
+        <attribute name="completionId" alias="completion_id" type="String"/>
+        <attribute name="choiceIndex" alias="choice_index" type="int"/>
+        <attribute name="viewIndex" alias="viewIndex" type="String"/>
+        <attribute name="elapsed" type="int"/>
+    </entity>
+    <entity name="EventResponse" scope="v1.events">
+        <stereotype name="response"/>
+        <context key="objectType" value="Event"/>
+    </entity>
+    <entity name="Event" scope="v1.events">
+        <stereotype name="dto"/>
+    </entity>
+    <!-- /v1/health -->
+    <entity name="Health" scope="v1.health">
+        <stereotype name="endpoint"/>
+        <method name="get" return="HealthResponse" scope="v1.health">
+            <stereotype name="get"/>
+            <stereotype name="header" key="accept" value="application/json"/>
+            <context key="url" value="/v1/health"/>
+            <attribute name="HealthRequest" type="HealthRequest" />
+        </method>
+    </entity>
+    <entity name="HealthRequest" scope="v1.health">
+        <context key="responseType" value="HealthResponse"/>
+        <stereotype name="request"/>
+    </entity>
+    <entity name="HealthResponse" scope="v1.health">
+        <stereotype name="response"/>
+        <context key="objectType" value="Health"/>
+    </entity>
+    <entity name="Health" scope="v1.health">
+        <stereotype name="dto"/>
+        <attribute name="model" type="String" />
+        <attribute name="chatModel" alias="chat_model" type="String" />
+        <attribute name="device" type="String" />
+        <attribute name="arch" type="String" />
+        <attribute name="cpuInfo" alias="cpu_info" type="String" />
+        <attribute name="cpuCount" alias="cpu_count" type="int" />
+        <attribute name="cudaDevices" alias="cuda_devices" type="list(String)" />
+        <attribute name="version" type="Version" />
+    </entity>
+    <entity name="Version" scope="v1.health">
+        <stereotype name="dto"/>
+        <attribute name="buildDate" alias="build_date" type="String" />
+        <attribute name="buildTimestamp" alias="build_timestamp" type="String" />
+        <attribute name="gitSha" alias="git_sha" type="String" />
+        <attribute name="gitDescribe" alias="git_describe" type="String" />
+    </entity>
+    <!-- /v1beta/chatcompletions -->
+    <entity name="ChatCompletion" scope="v1beta.chatcompletion">
+        <stereotype name="endpoint"/>
+        <method name="get" return="ChatCompletionResponse" scope="v1beta.chatcompletion">
+            <stereotype name="post"/>
+            <stereotype name="header" key="Content-Type" value="application/json"/>
+            <stereotype name="header" key="accept" value="text/event-stream"/>
+            <context key="url" value="/v1beta/chat/completions"/>
+            <attribute name="ChatCompletionRequest" type="ChatCompletionRequest" />
+        </method>
+    </entity>
+    <entity name="ChatCompletionRequest" scope="v1beta.chatcompletion">
+        <context key="responseType" value="ChatCompletionResponse"/>
+        <stereotype name="request"/>
+        <stereotype name="body"/>
+        <attribute name="messages" type="list(ChatCompletionMessage)" />
+    </entity>
+    <entity name="ChatCompletionMessage" scope="v1beta.chatcompletion">
+        <stereotype name="dto"/>
+        <attribute name="role" type="String" />
+        <attribute name="content" type="String" />
+    </entity>
+    <entity name="ChatCompletionResponse" scope="v1beta.chatcompletion">
+        <stereotype name="response"/>
+        <context key="objectType" value="ChatCompletionResult"/>
+    </entity>
+    <entity name="ChatCompletionResult" scope="v1beta.chatcompletion">
+        <stereotype name="list-dto"/>
+        <context key="elementType" value="ChatCompletion"/>
+    </entity>
+    <entity name="ChatCompletion" scope="v1beta.chatcompletion">
+        <stereotype name="dto"/>
+        <attribute name="id" type="String" />
+        <attribute name="created" type="long" />
+        <attribute name="systemFingerprint" alias="system_fingerprint" type="String" />
+        <attribute name="object" type="String" />
+        <attribute name="mode" type="String" />
+        <attribute name="choices" type="list(ChatCompletionChoice)" />
+    </entity>
+    <entity name="ChatCompletionChoice" scope="v1beta.chatcompletion">
+        <stereotype name="dto"/>
+        <attribute name="index" type="int" />
+        <attribute name="longprobs" type="String" />
+        <attribute name="finishReason" alias="finish_reason" type="String" />
+        <attribute name="delta" type="ChatCompletionChoiceDelta" />
+    </entity>
+    <entity name="ChatCompletionChoiceDelta" scope="v1beta.chatcompletion">
+        <stereotype name="dto"/>
+        <attribute name="content" type="String" />
+    </entity>
+    <!-- /v1beta/search -->
+    <entity name="Search" scope="v1beta.search">
+        <stereotype name="endpoint"/>
+        <method name="search" return="SearchResponse" scope="v1beta.search">
+            <stereotype name="get"/>
+            <stereotype name="header" key="accept" value="application/json"/>
+            <context key="url" value="/v1beta/search"/>
+            <attribute name="SearchRequest" type="SearchRequest" />
+        </method>
+    </entity>
+    <entity name="SearchRequest" scope="v1beta.search">
+        <context key="responseType" value="SearchResponse"/>
+        <stereotype name="request"/>
+        <attribute name="q" type="String">
+            <stereotype name="queryParameter"/>
+        </attribute>
+        <attribute name="limit" type="int">
+            <stereotype name="queryParameter"/>
+        </attribute>
+        <attribute name="offset" type="int">
+            <stereotype name="queryParameter"/>
+        </attribute>
+    </entity>
+    <entity name="SearchResponse" scope="v1beta.search">
+        <stereotype name="response"/>
+        <context key="objectType" value="SearchResult"/>
+    </entity>
+    <entity name="SearchResult" scope="v1beta.search">
+        <stereotype name="dto"/>
+        <attribute name="id" type="int" />
+        <attribute name="numHits" alias="num_hits" type="int" />
+        <attribute name="hits" type="list(Hit)" />
+    </entity>
+    <entity name="Hit" scope="v1beta.search">
+        <stereotype name="dto"/>
+        <attribute name="score" type="double" />
+        <attribute name="id" type="int" />
+        <attribute name="doc" type="HitDocument" />
+    </entity>
+    <entity name="HitDocument" scope="v1beta.search">
+        <stereotype name="dto"/>
+        <attribute name="body" type="String" />
+        <attribute name="filepath" type="String" />
+        <attribute name="gitUrl" alias="gitUrl" type="String" />
+        <attribute name="kind" type="String" />
+        <attribute name="language" type="String" />
+        <attribute name="name" type="String" />
+    </entity>
+</model>

@@ -1,24 +1,25 @@
+#set($H="#")
 [![](https://img.shields.io/badge/java-packagecloud.io-844fec.svg)](https://packagecloud.io/)
 [![Nightlies](https://github.com/mlieshoff/jabbyml/actions/workflows/nightlies.yml/badge.svg)](https://github.com/mlieshoff/jabbyml/actions/workflows/nightlies.yml)
 
-# jabbyml 1.0.0
+# jabbyml ${replacer.getVersion()}
 A Java Wrapper For TabbyML Server API
 
-## Why we don't use the Swagger scheme?
+$H$H Why we don't use the Swagger scheme?
 
 A big sorry for that, but the quality of that scheme changes from day to day.
 Another big sorry, but the OpenApi Java generator is producing code quality we like much.
 That's simple why :) If you think the same way (it may differ from case to case of course), feel free to continue using our wrapper.
 
-## Why we moved to the amazing services of packagecloud?
+$H$H Why we moved to the amazing services of packagecloud?
 
 We moved to packagecloud.io because the bintray closed their nice hosting... And packagecloud.io is a really nice place to be :)
 
-## Join us on Discord
+$H$H Join us on Discord
 
 https://discord.gg/WNb5c8hn
 
-## Simplest Usage
+$H$H Simplest Usage
 
 Note: Please combine the builder methods as it makes sense. The demonstrated is showing only all possibilities.
 For more information please check
@@ -64,86 +65,36 @@ list all supported apis
     System.out.println(jabbyML.listApis());
 ```
 
-### List of APIs and example usages
+$H$H$H List of APIs and example usages
 
-#### CompletionApi
+#foreach( $entity in $object )
+    #set($apiName="${entity.name}Api")
+$H$H$H$H ${apiName}
 ```java
     // create an instance for the api
-    CompletionApi api = jabbyML.getApi(CompletionApi.class);
+    ${apiName} api = jabbyML.getApi(${apiName}.class);
 ```
+    #foreach( $method in $entity.method )
+        #set($parameter=$method.attribute.get(0))
+        #set($requestObject=${helper.getEntity($method.scope, $parameter.type)})
+        #set($requestName=${parameter.name})
+        #set($packagePrefix=${replacer.getPackageNamePrefix($properties, $method.scope, $parameter.type)})
+        #set($methodName=${replacer.getMethodName($method.name)})
 ```java
-    // find
-    CompletionResponse response = api.find(CompletionRequest.builder()
-           .language()
-           .segments()
+    // ${method.name}
+    ${method.return} response = api.${method.name}(${requestName}.builder()
+       #foreach($attribute in $requestObject.attribute)
+           .${attribute.name}()
+       #end
            // store raw response
            .storeRawResponse()
         .build()
     ).get();
 ```
-#### EventApi
-```java
-    // create an instance for the api
-    EventApi api = jabbyML.getApi(EventApi.class);
-```
-```java
-    // find
-    EventResponse response = api.find(EventRequest.builder()
-           .type()
-           .completionId()
-           .choiceIndex()
-           .viewIndex()
-           .elapsed()
-           // store raw response
-           .storeRawResponse()
-        .build()
-    ).get();
-```
-#### HealthApi
-```java
-    // create an instance for the api
-    HealthApi api = jabbyML.getApi(HealthApi.class);
-```
-```java
-    // get
-    HealthResponse response = api.get(HealthRequest.builder()
-           // store raw response
-           .storeRawResponse()
-        .build()
-    ).get();
-```
-#### ChatCompletionApi
-```java
-    // create an instance for the api
-    ChatCompletionApi api = jabbyML.getApi(ChatCompletionApi.class);
-```
-```java
-    // get
-    ChatCompletionResponse response = api.get(ChatCompletionRequest.builder()
-           .messages()
-           // store raw response
-           .storeRawResponse()
-        .build()
-    ).get();
-```
-#### SearchApi
-```java
-    // create an instance for the api
-    SearchApi api = jabbyML.getApi(SearchApi.class);
-```
-```java
-    // search
-    SearchResponse response = api.search(SearchRequest.builder()
-           .q()
-           .limit()
-           .offset()
-           // store raw response
-           .storeRawResponse()
-        .build()
-    ).get();
-```
+    #end
+#end
 
-## Add or replace registered API's
+$H$H Add or replace registered API's
 
 ```java
     JabbyML jabbyML = new JabbyML(...);
@@ -154,11 +105,11 @@ list all supported apis
 
 Custom API implementations just need to inherit from *BaseApi*.
 
-## Asynchronous usage
+$H$H Asynchronous usage
 
 All requests are returning *java.concurrent.Future*. The execution will be asynchronous by default.
 
-## How to bind the packagecloud repository
+$H$H How to bind the packagecloud repository
 
 ```xml
     <repositories>
@@ -175,11 +126,11 @@ All requests are returning *java.concurrent.Future*. The execution will be async
     </repositories>
 ```
 
-## Add dependency
+$H$H Add dependency
 
 to Gradle:
 ```groovy
-    implementation group: 'jabbyml', name: 'jabbyml', version: '1.0.0'
+    implementation group: 'jabbyml', name: 'jabbyml', version: '${replacer.getVersion()}'
 ```
 
 to Maven:
@@ -187,23 +138,23 @@ to Maven:
     <dependency>
         <groupId>jabbyml</groupId>
         <artifactId>jabbyml</artifactId>
-        <version>1.0.0</version>
+        <version>${replacer.getVersion()}</version>
     </dependency>
 ```
 
-## Continuous Integration
+$H$H Continuous Integration
 
 https://github.com/mlieshoff/jabbyml/actions
 
-## Repository
+$H$H Repository
 
 https://packagecloud.io/mlieshoff/jabbyml
 
-## Logging
+$H$H Logging
 
 We are using SLF4j.
 
-## Usage of RoyaleApi proxy
+$H$H Usage of RoyaleApi proxy
 
 This wrapper can be easyly connected to the proxy of our friends on RoyaleAPI. Please proceed first the steps described here:
 
@@ -217,6 +168,6 @@ Then initialize an instance of class Api like that:
 
 That's all, enjoy :)
 
-## Contributing
+$H$H Contributing
 
 1. Set up the formatting hook, via copying the files under ./jabbyml/hooks to ./jabbyml/.git/hooks

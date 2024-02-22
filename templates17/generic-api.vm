@@ -1,0 +1,44 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+#set($packageName=$replacer.getPackageName($properties, $object))
+package ${packageName};
+#set($basePackageName=$replacer.getBasePackageName($properties))
+
+import java.util.concurrent.Future;
+import jabbyml.essentials.api.Api;
+
+#set($foundImports=false)
+#foreach( $method in $object.method )
+    #set($attribute=$method.attribute.get(0))
+    #set($packagePrefix=${replacer.getPackageNamePrefix($properties, $method.scope, $attribute.type)})
+    #if(!$packagePrefix.equals($packageName.concat(".")))
+    import ${packagePrefix}${replacer.getTypeName($method.return)};
+    import ${packagePrefix}${replacer.getTypeName($attribute.type)};
+        #set($foundImports=true)
+    #end
+#end
+#if($foundImports)
+
+#end
+public interface ${filename} extends Api {
+
+#foreach( $method in $object.method )
+  #set($attribute=$method.attribute.get(0))
+  Future<${replacer.getTypeName($method.return)}> ${replacer.getMethodName($method.name)}(#foreach( $attribute in $method.attribute )${replacer.getTypeName($attribute.type)} ${replacer.getAttributeName($attribute.type)}#end);
+#end
+
+}
